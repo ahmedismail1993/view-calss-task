@@ -1,0 +1,9 @@
+{
+  "validation": {
+    "required": "%{attribute} مطلوب",
+    "maxLength": "%{attribute}  يجب ان يكون حد اقصي %{max} حرف",
+    "minLength": "%{attribute} يجب ان يكون %{min}  حرف علي الاقل ",
+    "numeric": "هذا الحقل يجب عن يكون ارقام",
+    "email": "%{attribute}  غير صحيح"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "validation": {
+    "required": "%{attribute} field is required",
+    "maxLength": "%{attribute} field must be less than %{max} characters",
+    "minLength": "%{attribute} field must be at least %{min} characters",
+    "numeric": "This value must be a number greater than 0",
+    "email": "%{attribute} field is not a valid email address",
+    "url": "This Url not valid"
+  },
+  "input": {
+    "video_url": "Video Url",
+    "title": "Title",
+    "descriptions": "Descriptions",
+    "publish_date": "Publish Date",
+    "preparations": "Preparations",
+    "tags": ""
+  }
+}
