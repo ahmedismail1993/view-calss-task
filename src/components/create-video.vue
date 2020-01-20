@@ -164,7 +164,7 @@ eslint-disable no-console */
                     </b-form-group>
                   </b-col>
                   <b-col cols="12">
-                    <b-btn type="submit" variant="primary">add</b-btn>
+                    <b-btn :disabled="$v.form.$invalid" type="submit" variant="primary">add</b-btn>
                   </b-col>
                 </b-form>
               </formWrapper>
