@@ -13,7 +13,7 @@ eslint-disable no-console */
 
             <b-card-body>
               <formWrapper :validator="$v.form">
-                <b-form>
+                <b-form @submit.prevent="handleSubmit">
                   <b-col cols="12">
                     <form-group name="title">
                       <template slot-scope="{ attrs, listeners }">
@@ -100,16 +100,11 @@ eslint-disable no-console */
                     </form-group>
                   </b-col>
                   <b-col cols="12">
-                    <form-group name="preparations">
-                      <template slot-scope="{ attrs, listeners }">
-                        <b-form-select
-                          v-bind="attrs"
-                          v-on="listeners"
-                          v-model.number="form.preparation_id"
-                          :options="PreparationsList"
-                        ></b-form-select>
-                      </template>
-                    </form-group>
+                    <span class="label">preparations</span>
+                    <b-form-select
+                      v-model.number="form.preparation_id"
+                      :options="PreparationsList"
+                    ></b-form-select>
                   </b-col>
                   <b-col cols="12">
                     <label for="tags">Tags</label>
@@ -147,18 +142,18 @@ eslint-disable no-console */
                       <label for="publish_in_special_lib" class="label"
                         >Publish it in special libraries</label
                       >
-                      <b-form-select
-                        id="publish_in_special_lib"
+                      <v-select
+                        multiple
                         v-model="form.publish_custom_library"
                         :options="publishInSpecial"
-                      ></b-form-select>
+                      />
                     </b-col>
                   </b-row>
                   <h2 class="label">Share Conetent With Students</h2>
                   <small class="label"
                     >*must selected at least on section</small
                   >
-                  <b-col>
+                  <b-col cols="12">
                     <b-form-group>
                       <b-form-checkbox-group
                         v-model="form.classes"
@@ -167,6 +162,9 @@ eslint-disable no-console */
                         stacked
                       ></b-form-checkbox-group>
                     </b-form-group>
+                  </b-col>
+                  <b-col cols="12">
+                    <b-btn type="submit" variant="primary">add</b-btn>
                   </b-col>
                 </b-form>
               </formWrapper>
@@ -182,11 +180,15 @@ eslint-disable no-console */
 import { required, minLength, maxLength, url } from "vuelidate/lib/validators";
 import Datepicker from "vuejs-datepicker";
 import { StoreData, IndexData } from "@/api/apiMethods.js";
+import "vue-select/dist/vue-select.css";
+import vSelect from "vue-select";
+
 import moment from "moment";
 export default {
   name: "CreateVideo",
   components: {
-    Datepicker
+    Datepicker,
+    vSelect
   },
   data() {
     return {
@@ -202,8 +204,10 @@ export default {
         preparation_id: "",
         tags: [],
         publish_in: "",
-        publish_custom_library: []
+        publish_custom_library: [],
+        classes: []
       },
+      checkAll: false,
       PreparationsList: [],
       publishInSpecial: [],
       studentsClasses: [],
@@ -223,6 +227,15 @@ export default {
     this.handleGetPublishIn();
   },
   methods: {
+    async handleSubmit() {
+      const formData = new FormData();
+      const reqData = { ...this.form, subject_id: 1 };
+      Object.keys(reqData).map(elKey => formData.append(elKey, reqData[elKey]));
+      const response = await StoreData("library.video.create", formData);
+      // eslint-disable-next-line no-console
+      console.log(response);
+    },
+
     async handleGetData(endPoint, selectedField, dataBody) {
       try {
         const res = await StoreData(endPoint, { [dataBody]: 1 });
@@ -235,9 +248,8 @@ export default {
     async handleGetPublishIn() {
       try {
         const res = await IndexData("custom-libraries.list", { subject_id: 1 });
-        this.publishInSpecial = res.data[1];
-        // eslint-disable-next-line no-console
-        console.log(res);
+        const data = res.data[1];
+        this.publishInSpecial = Object.keys(data).map(el => data[el]);
       } catch (error) {
         // eslint-disable-next-line no-console
         console.log(error);
@@ -247,8 +259,6 @@ export default {
       return moment(date).format("Do MMMM YYYY, h:mm:ss a");
     },
     handleAddVideoUrl({ name }) {
-      // eslint-disable-next-line no-console
-      console.log(name);
       if (name !== "upload") {
         this.showUrlInput = true;
         this.form.video_type = name;
